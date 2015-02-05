@@ -36,10 +36,10 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       send_command("add @zacstewart to reviews")
 
       send_command("review me")
-      expect(replies.last).to eq("@zacstewart")
+      expect(replies.last).to eq("@iamvery")
 
       send_command("review me")
-      expect(replies.last).to eq("@iamvery")
+      expect(replies.last).to eq("@zacstewart")
     end
   end
 end

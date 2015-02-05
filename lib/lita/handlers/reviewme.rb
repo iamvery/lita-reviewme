@@ -9,7 +9,7 @@ module Lita
 
       def add_reviewer(response)
         reviewer = response.matches.flatten.first
-        redis.rpush(REDIS_LIST, reviewer)
+        redis.lpush(REDIS_LIST, reviewer)
         response.reply("added #{reviewer} to reviews")
       end
 
