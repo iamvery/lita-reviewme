@@ -6,7 +6,7 @@ module Lita
       route(/add (.+) to reviews/i, :add_reviewer, command: true, help: { "add @iamvery to reviews" => "adds @iamvery to the reviewer rotation" })
       route(/remove (.+) from reviews/i, :remove_reviewer, command: true, help: { "remove @iamvery from reviews" => "removes @iamvery from the reviewer rotation" })
       route(/review me/i, :generate_assignment, command: true, help: { "review me" => "responds with the next reviewer" })
-      route(%r{review (https://)?github.com/(.+)/(.+)/(pull|issues)/\d+}i, :comment_on_pull_request, command: true)
+      route(%r{review (https://)?github.com/(.+)/(.+)/(pull|issues)/\d+}i, :comment_on_github, command: true)
 
       def add_reviewer(response)
         reviewer = response.matches.flatten.first
@@ -25,7 +25,7 @@ module Lita
         response.reply(reviewer.to_s)
       end
 
-      def comment_on_pull_request(response)
+      def comment_on_github(response)
         response.reply("Wouldn't this be awesome? You should implement it!")
       end
     end
