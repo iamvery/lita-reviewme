@@ -1,3 +1,5 @@
+require 'octokit'
+
 module Lita
   module Handlers
     class Reviewme < Handler
@@ -26,13 +28,31 @@ module Lita
       end
 
       def comment_on_github(response)
-        response.reply("Wouldn't this be awesome? You should implement it!")
+        repo = response.matches.flatten.first
+        id = response.matches.flatten.last
+        reviewer = next_reviewer
+        comment = github_comment(reviewer)
+
+        github_client.add_comment(repo, id, comment)
+        response.reply("#{reviewer} should be on it...")
       end
 
       private
 
       def next_reviewer
         redis.rpoplpush(REDIS_LIST, REDIS_LIST)
+      end
+
+      def github_comment(reviewer)
+        ":eyes: #{reviewer}"
+      end
+
+      def github_client
+        @github_client ||= Octokit::Client.new(access_token: github_access_token)
+      end
+
+      def github_access_token
+        ENV['GITHUB_WOLFBRAIN_ACCESS_TOKEN']
       end
     end
 

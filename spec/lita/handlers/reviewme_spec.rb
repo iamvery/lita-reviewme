@@ -44,4 +44,19 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       expect(replies.last).to eq("@zacstewart")
     end
   end
+
+  describe "#comment_on_github" do
+    it "posts comment on github" do
+      repo = "gh_user/repo"
+      id = "123"
+
+      expect_any_instance_of(Octokit::Client).to receive(:add_comment)
+        .with(repo, id, ":eyes: @iamvery")
+
+      send_command("add @iamvery to reviews")
+      send_command("review https://github.com/#{repo}/pull/#{id}")
+
+      expect(replies.last).to eq("@iamvery should be on it...")
+    end
+  end
 end
