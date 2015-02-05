@@ -1,3 +1,5 @@
+require 'octokit'
+
 module Lita
   module Handlers
     class Reviewme < Handler
@@ -6,7 +8,7 @@ module Lita
       route(/add (.+) to reviews/i, :add_reviewer, command: true, help: { "add @iamvery to reviews" => "adds @iamvery to the reviewer rotation" })
       route(/remove (.+) from reviews/i, :remove_reviewer, command: true, help: { "remove @iamvery from reviews" => "removes @iamvery from the reviewer rotation" })
       route(/review me/i, :generate_assignment, command: true, help: { "review me" => "responds with the next reviewer" })
-      route(%r{review (https://)?github.com/(.+)/(.+)/pull/\d+}i, :comment_on_pull_request, command: true)
+      route(%r{review (https://)?github.com/(?<repo>.+)/(pull|issues)/(?<id>\d+)}i, :comment_on_github, command: true)
 
       def add_reviewer(response)
         reviewer = response.matches.flatten.first
@@ -21,12 +23,36 @@ module Lita
       end
 
       def generate_assignment(response)
-        reviewer = redis.rpoplpush(REDIS_LIST, REDIS_LIST)
+        reviewer = next_reviewer
         response.reply(reviewer.to_s)
       end
 
-      def comment_on_pull_request(response)
-        response.reply("Wouldn't this be awesome? You should implement it!")
+      def comment_on_github(response)
+        repo = response.matches.flatten.first
+        id = response.matches.flatten.last
+        reviewer = next_reviewer
+        comment = github_comment(reviewer)
+
+        github_client.add_comment(repo, id, comment)
+        response.reply("#{reviewer} should be on it...")
+      end
+
+      private
+
+      def next_reviewer
+        redis.rpoplpush(REDIS_LIST, REDIS_LIST)
+      end
+
+      def github_comment(reviewer)
+        ":eyes: #{reviewer}"
+      end
+
+      def github_client
+        @github_client ||= Octokit::Client.new(access_token: github_access_token)
+      end
+
+      def github_access_token
+        ENV['GITHUB_WOLFBRAIN_ACCESS_TOKEN']
       end
     end
 
