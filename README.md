@@ -13,7 +13,11 @@ gem "lita-reviewme"
 
 ## Configuration
 
-TODO: Describe any configuration attributes the plugin exposes.
+Environment variable needed for Github integration:
+
+```
+ENV["GITHUB_WOLFBRAIN_ACCESS_TOKEN"]
+```
 
 ## Usage
 
