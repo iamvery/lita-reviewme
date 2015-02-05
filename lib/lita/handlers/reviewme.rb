@@ -21,12 +21,18 @@ module Lita
       end
 
       def generate_assignment(response)
-        reviewer = redis.rpoplpush(REDIS_LIST, REDIS_LIST)
+        reviewer = next_reviewer
         response.reply(reviewer.to_s)
       end
 
       def comment_on_github(response)
         response.reply("Wouldn't this be awesome? You should implement it!")
+      end
+
+      private
+
+      def next_reviewer
+        redis.rpoplpush(REDIS_LIST, REDIS_LIST)
       end
     end
 
