@@ -4,6 +4,7 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
   it { routes_command("add @iamvery to reviews").to :add_reviewer }
   it { routes_command("remove @iamvery from reviews").to :remove_reviewer }
   it { routes_command("review me").to :generate_assignment }
+  it { routes_command("review http://github.com/user/repo/pulls/123").to :comment_on_pull_request }
 
   let(:reply) { replies.last }
 

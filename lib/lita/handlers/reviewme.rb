@@ -6,6 +6,7 @@ module Lita
       route(/add (.+) to reviews/i, :add_reviewer, command: true, help: { "add @iamvery to reviews" => "adds @iamvery to the reviewer rotation" })
       route(/remove (.+) from reviews/i, :remove_reviewer, command: true, help: { "remove @iamvery from reviews" => "removes @iamvery from the reviewer rotation" })
       route(/review me/i, :generate_assignment, command: true, help: { "review me" => "responds with the next reviewer" })
+      route(%r{review (http://)?github.com/(.+)/(.+)/pulls/\d+}i, :comment_on_pull_request, command: true)
 
       def add_reviewer(response)
         reviewer = response.matches.flatten.first
@@ -22,6 +23,10 @@ module Lita
       def generate_assignment(response)
         reviewer = redis.rpoplpush(REDIS_LIST, REDIS_LIST)
         response.reply(reviewer.to_s)
+      end
+
+      def comment_on_pull_request(response)
+        response.reply("Wouldn't this be awesome? You should implement it!")
       end
     end
 
