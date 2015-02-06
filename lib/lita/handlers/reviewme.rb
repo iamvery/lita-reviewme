@@ -37,6 +37,7 @@ module Lita
         %r{review (https://)?github.com/(?<repo>.+)/(pull|issues)/(?<id>\d+)}i,
         :comment_on_github,
         command: true,
+        help: { "review https://github.com/user/repo/pull/123" => "adds comment to GH issue requesting review" },
       )
 
       def add_reviewer(response)
