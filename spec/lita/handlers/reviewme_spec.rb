@@ -3,6 +3,7 @@ require "spec_helper"
 describe Lita::Handlers::Reviewme, lita_handler: true do
   it { routes_command("add @iamvery to reviews").to :add_reviewer }
   it { routes_command("remove @iamvery from reviews").to :remove_reviewer }
+  it { routes_command("reviewers").to :display_reviewers }
   it { routes_command("review me").to :generate_assignment }
   it { routes_command("review https://github.com/user/repo/pull/123").to :comment_on_github }
   it { routes_command("review https://github.com/user/repo/issues/123").to :comment_on_github }
@@ -57,6 +58,16 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       send_command("review https://github.com/#{repo}/pull/#{id}")
 
       expect(replies.last).to eq("@iamvery should be on it...")
+    end
+  end
+
+  describe "#display_reviewers" do
+    it "responds with list of reviewers" do
+      send_command("add @iamvery to reviews")
+      send_command("add @zacstewart to reviews")
+      send_command("reviewers")
+
+      expect(reply).to eq("@zacstewart, @iamvery")
     end
   end
 end

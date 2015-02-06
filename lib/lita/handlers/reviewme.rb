@@ -7,6 +7,7 @@ module Lita
 
       route(/add (.+) to reviews/i, :add_reviewer, command: true, help: { "add @iamvery to reviews" => "adds @iamvery to the reviewer rotation" })
       route(/remove (.+) from reviews/i, :remove_reviewer, command: true, help: { "remove @iamvery from reviews" => "removes @iamvery from the reviewer rotation" })
+      route(/reviewers/i, :display_reviewers, command: true)
       route(/review me/i, :generate_assignment, command: true, help: { "review me" => "responds with the next reviewer" })
       route(%r{review (https://)?github.com/(?<repo>.+)/(pull|issues)/(?<id>\d+)}i, :comment_on_github, command: true)
 
@@ -20,6 +21,11 @@ module Lita
         reviewer = response.matches.flatten.first
         redis.lrem(REDIS_LIST, 0, reviewer)
         response.reply("removed #{reviewer} from reviews")
+      end
+
+      def display_reviewers(response)
+        reviewers = redis.lrange(REDIS_LIST, 0, -1)
+        response.reply(reviewers.join(', '))
       end
 
       def generate_assignment(response)
