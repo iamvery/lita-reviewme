@@ -23,6 +23,7 @@ module Lita
         /reviewers/i,
         :display_reviewers,
         command: true,
+        help: { "reviewers" => "display list of reviewers" },
       )
 
       route(
