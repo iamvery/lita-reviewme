@@ -5,11 +5,38 @@ module Lita
     class Reviewme < Handler
       REDIS_LIST = "reviewers"
 
-      route(/add (.+) to reviews/i, :add_reviewer, command: true, help: { "add @iamvery to reviews" => "adds @iamvery to the reviewer rotation" })
-      route(/remove (.+) from reviews/i, :remove_reviewer, command: true, help: { "remove @iamvery from reviews" => "removes @iamvery from the reviewer rotation" })
-      route(/reviewers/i, :display_reviewers, command: true)
-      route(/review me/i, :generate_assignment, command: true, help: { "review me" => "responds with the next reviewer" })
-      route(%r{review (https://)?github.com/(?<repo>.+)/(pull|issues)/(?<id>\d+)}i, :comment_on_github, command: true)
+      route(
+        /add (.+) to reviews/i,
+        :add_reviewer,
+        command: true,
+        help: { "add @iamvery to reviews" => "adds @iamvery to the reviewer rotation" },
+      )
+
+      route(
+        /remove (.+) from reviews/i,
+        :remove_reviewer,
+        command: true,
+        help: { "remove @iamvery from reviews" => "removes @iamvery from the reviewer rotation" },
+      )
+
+      route(
+        /reviewers/i,
+        :display_reviewers,
+        command: true,
+      )
+
+      route(
+        /review me/i,
+        :generate_assignment,
+        command: true,
+        help: { "review me" => "responds with the next reviewer" },
+      )
+
+      route(
+        %r{review (https://)?github.com/(?<repo>.+)/(pull|issues)/(?<id>\d+)}i,
+        :comment_on_github,
+        command: true,
+      )
 
       def add_reviewer(response)
         reviewer = response.matches.flatten.first
