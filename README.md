@@ -1,6 +1,7 @@
 # lita-reviewme
 
-TODO: Add a description of the plugin.
+A [lita](https://www.lita.io/) handler that helps with [code review](http://en.wikipedia.org/wiki/Code_review)
+without getting in the way.
 
 ## Installation
 
