@@ -45,7 +45,10 @@ ENV["GITHUB_WOLFBRAIN_ACCESS_TOKEN"]
 >
 > **Nerdbot** @iamvery
 
-### Post a comment on a Github pull request or issue mentioning the next reviewer
+### Comment on a Github pull request or issue
+This will post a comment mentioning the next reviewer on the referenced Github
+pull request or issue. In order for this to work, @wolfbrain must have access
+to the repository.
 
 > **Jay H.** Nerdbot: review https://github.com/iamvery/lita-reviewme/issues/7
 >
