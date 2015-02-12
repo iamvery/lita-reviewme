@@ -24,6 +24,7 @@ ENV["GITHUB_WOLFBRAIN_ACCESS_TOKEN"]
 ### See who is in the review rotation.
 
 > **Jay H.** Nerdbot: reviewers
+>
 > **Nerdbot** @iamvery, @zacstewart, ...
 
 ### Add a name to the review rotation
