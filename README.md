@@ -3,6 +3,9 @@
 A [lita](https://www.lita.io/) handler that helps with [code review](http://en.wikipedia.org/wiki/Code_review)
 without getting in the way.
 
+The handler rotates, in order, through a list of names to provider a "reviewer"
+for some unit of work.
+
 ## Installation
 
 Add lita-reviewme to your Lita instance's Gemfile:
