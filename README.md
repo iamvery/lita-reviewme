@@ -8,9 +8,8 @@ without getting in the way.
 Add lita-reviewme to your Lita instance's Gemfile:
 
 ``` ruby
-gem "lita-reviewme"
+gem "lita-reviewme", github: "iamvery/lita-reviewme"
 ```
-
 
 ## Configuration
 
