@@ -2,7 +2,9 @@ require "spec_helper"
 
 describe Lita::Handlers::Reviewme, lita_handler: true do
   it { is_expected.to route_command("add @iamvery to reviews").to :add_reviewer }
+  it { is_expected.to route_command("add reviewer @iamvery").to :add_reviewer }
   it { is_expected.to route_command("remove @iamvery from reviews").to :remove_reviewer }
+  it { is_expected.to route_command("remove reviewer @iamvery").to :remove_reviewer }
   it { is_expected.to route_command("reviewers").to :display_reviewers }
   it { is_expected.to route_command("review me").to :generate_assignment }
   it { is_expected.to route_command("review https://github.com/user/repo/pull/123").to :comment_on_github }
