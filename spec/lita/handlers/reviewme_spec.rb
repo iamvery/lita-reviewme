@@ -83,4 +83,12 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       expect(reply).to eq("@zacstewart, @iamvery")
     end
   end
+
+  describe "#mention_reviewer" do
+    it "mentions a reviewer in chat with the given URL" do
+      send_command("add @iamvery to reviews")
+      send_command("review https://bitbucket.org/user/repo/pull-requests/123")
+      expect(replies.last).to eq("@iamvery: :eyes: https://bitbucket.org/user/repo/pull-requests/123")
+    end
+  end
 end
