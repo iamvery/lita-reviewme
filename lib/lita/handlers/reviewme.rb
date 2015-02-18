@@ -9,7 +9,6 @@ module Lita
         /add (.+) to reviews/i,
         :add_reviewer,
         command: true,
-        help: { "add @iamvery to reviews" => "adds @iamvery to the reviewer rotation" },
       )
 
       route(
@@ -23,7 +22,6 @@ module Lita
         /remove (.+) from reviews/i,
         :remove_reviewer,
         command: true,
-        help: { "remove @iamvery from reviews" => "removes @iamvery from the reviewer rotation" },
       )
 
       route(
