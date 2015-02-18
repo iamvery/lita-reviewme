@@ -1,12 +1,13 @@
 require "spec_helper"
 
 describe Lita::Handlers::Reviewme, lita_handler: true do
-  it { routes_command("add @iamvery to reviews").to :add_reviewer }
-  it { routes_command("remove @iamvery from reviews").to :remove_reviewer }
-  it { routes_command("reviewers").to :display_reviewers }
-  it { routes_command("review me").to :generate_assignment }
-  it { routes_command("review https://github.com/user/repo/pull/123").to :comment_on_github }
-  it { routes_command("review https://github.com/user/repo/issues/123").to :comment_on_github }
+  it { is_expected.to route_command("add @iamvery to reviews").to :add_reviewer }
+  it { is_expected.to route_command("remove @iamvery from reviews").to :remove_reviewer }
+  it { is_expected.to route_command("reviewers").to :display_reviewers }
+  it { is_expected.to route_command("review me").to :generate_assignment }
+  it { is_expected.to route_command("review https://github.com/user/repo/pull/123").to :comment_on_github }
+  it { is_expected.to route_command("review https://github.com/user/repo/issues/123").to :comment_on_github }
+  it { is_expected.to route_command("review https://bitbucket.org/user/repo/pull-requests/123").to :mention_reviewer }
 
   let(:reply) { replies.last }
 
@@ -80,6 +81,14 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       send_command("reviewers")
 
       expect(reply).to eq("@zacstewart, @iamvery")
+    end
+  end
+
+  describe "#mention_reviewer" do
+    it "mentions a reviewer in chat with the given URL" do
+      send_command("add @iamvery to reviews")
+      send_command("review https://bitbucket.org/user/repo/pull-requests/123")
+      expect(replies.last).to eq("@iamvery: :eyes: https://bitbucket.org/user/repo/pull-requests/123")
     end
   end
 end

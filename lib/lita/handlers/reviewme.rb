@@ -40,6 +40,13 @@ module Lita
         help: { "review https://github.com/user/repo/pull/123" => "adds comment to GH issue requesting review" },
       )
 
+      route(
+        %r{review (https?://(?!github.com).*)}i,
+        :mention_reviewer,
+        command: true,
+        help: { "review http://some-non-github-url.com" => "requests review of the given URL in chat" }
+      )
+
       def add_reviewer(response)
         reviewer = response.matches.flatten.first
         redis.lpush(REDIS_LIST, reviewer)
@@ -75,6 +82,12 @@ module Lita
           url = response.match_data[:url]
           response.reply("I couldn't post a comment. (Are the permissions right?) #{chat_mention(reviewer, url)}")
         end
+      end
+
+      def mention_reviewer(response)
+        url = response.matches.flatten.first
+        reviewer = next_reviewer
+        response.reply(chat_mention(reviewer, url))
       end
 
       private
