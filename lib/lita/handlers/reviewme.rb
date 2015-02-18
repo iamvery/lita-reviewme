@@ -9,14 +9,26 @@ module Lita
         /add (.+) to reviews/i,
         :add_reviewer,
         command: true,
-        help: { "add @iamvery to reviews" => "adds @iamvery to the reviewer rotation" },
+      )
+
+      route(
+        /add reviewer (.+)/i,
+        :add_reviewer,
+        command: true,
+        help: { "add reviewer @iamvery" => "adds @iamvery to the reviewer rotation" },
       )
 
       route(
         /remove (.+) from reviews/i,
         :remove_reviewer,
         command: true,
-        help: { "remove @iamvery from reviews" => "removes @iamvery from the reviewer rotation" },
+      )
+
+      route(
+        /remove reviewer (.+)/i,
+        :remove_reviewer,
+        command: true,
+        help: { "remove reviewer @iamvery" => "removes @iamvery from the reviewer rotation" },
       )
 
       route(
