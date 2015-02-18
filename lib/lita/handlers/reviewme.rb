@@ -63,8 +63,8 @@ module Lita
       end
 
       def comment_on_github(response)
-        repo = response.matches.flatten.first
-        id = response.matches.flatten.last
+        repo = response.match_data[:repo]
+        id = response.match_data[:id]
         reviewer = next_reviewer
         comment = github_comment(reviewer)
 
