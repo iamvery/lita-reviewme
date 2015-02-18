@@ -34,7 +34,7 @@ module Lita
       )
 
       route(
-        %r{review (https://)?github.com/(?<repo>.+)/(pull|issues)/(?<id>\d+)}i,
+        %r{review (?<url>(https://)?github.com/(?<repo>.+)/(pull|issues)/(?<id>\d+))}i,
         :comment_on_github,
         command: true,
         help: { "review https://github.com/user/repo/pull/123" => "adds comment to GH issue requesting review" },
@@ -63,13 +63,18 @@ module Lita
       end
 
       def comment_on_github(response)
-        repo = response.matches.flatten.first
-        id = response.matches.flatten.last
+        repo = response.match_data[:repo]
+        id = response.match_data[:id]
         reviewer = next_reviewer
         comment = github_comment(reviewer)
 
-        github_client.add_comment(repo, id, comment)
-        response.reply("#{reviewer} should be on it...")
+        begin
+          github_client.add_comment(repo, id, comment)
+          response.reply("#{reviewer} should be on it...")
+        rescue Octokit::Error
+          url = response.match_data[:url]
+          response.reply("I couldn't post a comment. (Are the permissions right?) #{chat_mention(reviewer, url)}")
+        end
       end
 
       private
@@ -88,6 +93,10 @@ module Lita
 
       def github_access_token
         ENV['GITHUB_WOLFBRAIN_ACCESS_TOKEN']
+      end
+
+      def chat_mention(reviewer, url)
+        "#{reviewer}: :eyes: #{url}"
       end
     end
 

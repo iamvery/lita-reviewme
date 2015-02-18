@@ -59,6 +59,18 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
 
       expect(replies.last).to eq("@iamvery should be on it...")
     end
+
+    it "handles errors gracefully" do
+      expect_any_instance_of(Octokit::Client).to receive(:add_comment)
+        .and_raise(Octokit::Error)
+
+      url = "https://github.com/iamvery/lita-reviewme/pull/5"
+
+      send_command("add @iamvery to reviews")
+      send_command("review #{url}")
+
+      expect(replies.last).to eq("I couldn't post a comment. (Are the permissions right?) @iamvery: :eyes: #{url}")
+    end
   end
 
   describe "#display_reviewers" do
