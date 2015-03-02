@@ -46,14 +46,14 @@ module Lita
       )
 
       route(
-        %r{review (?<url>(https://)?github.com/(?<repo>.+)/(pull|issues)/(?<id>\d+))}i,
+        %r{review <?(?<url>(https://)?github.com/(?<repo>.+)/(pull|issues)/(?<id>\d+))>?}i,
         :comment_on_github,
         command: true,
         help: { "review https://github.com/user/repo/pull/123" => "adds comment to GH issue requesting review" },
       )
 
       route(
-        %r{review (https?://(?!github.com).*)}i,
+        %r{review <?(https?://(?!github.com).*)>?}i,
         :mention_reviewer,
         command: true,
         help: { "review http://some-non-github-url.com" => "requests review of the given URL in chat" }

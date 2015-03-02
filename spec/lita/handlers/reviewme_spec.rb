@@ -8,8 +8,10 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
   it { is_expected.to route_command("reviewers").to :display_reviewers }
   it { is_expected.to route_command("review me").to :generate_assignment }
   it { is_expected.to route_command("review https://github.com/user/repo/pull/123").to :comment_on_github }
+  it { is_expected.to route_command("review <https://github.com/user/repo/pull/123>").to :comment_on_github }
   it { is_expected.to route_command("review https://github.com/user/repo/issues/123").to :comment_on_github }
   it { is_expected.to route_command("review https://bitbucket.org/user/repo/pull-requests/123").to :mention_reviewer }
+  it { is_expected.to route_command("review <https://bitbucket.org/user/repo/pull-requests/123>").to :mention_reviewer }
 
   let(:reply) { replies.last }
 
