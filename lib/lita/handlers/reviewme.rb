@@ -109,7 +109,7 @@ module Lita
       end
 
       def github_comment(reviewer)
-        ":eyes: #{reviewer}"
+        ":eyes: @#{reviewer}"
       end
 
       def github_client
