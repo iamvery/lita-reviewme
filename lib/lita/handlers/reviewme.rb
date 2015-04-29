@@ -15,7 +15,7 @@ module Lita
         /add reviewer (.+)/i,
         :add_reviewer,
         command: true,
-        help: { "add reviewer @iamvery" => "adds @iamvery to the reviewer rotation" },
+        help: { "add reviewer iamvery" => "adds iamvery to the reviewer rotation" },
       )
 
       route(
@@ -28,7 +28,7 @@ module Lita
         /remove reviewer (.+)/i,
         :remove_reviewer,
         command: true,
-        help: { "remove reviewer @iamvery" => "removes @iamvery from the reviewer rotation" },
+        help: { "remove reviewer iamvery" => "removes iamvery from the reviewer rotation" },
       )
 
       route(
