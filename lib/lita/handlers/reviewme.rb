@@ -59,32 +59,32 @@ module Lita
         help: { "review http://some-non-github-url.com" => "requests review of the given URL in chat" }
       )
 
-      def add_reviewer(response)
+      def add_reviewer(response, room: get_room(response))
         reviewer = response.matches.flatten.first
-        redis.lpush(REDIS_LIST, reviewer)
+        ns_redis(room).lpush(REDIS_LIST, reviewer)
         response.reply("added #{reviewer} to reviews")
       end
 
-      def remove_reviewer(response)
+      def remove_reviewer(response, room: get_room(response))
         reviewer = response.matches.flatten.first
-        redis.lrem(REDIS_LIST, 0, reviewer)
+        ns_redis(room).lrem(REDIS_LIST, 0, reviewer)
         response.reply("removed #{reviewer} from reviews")
       end
 
-      def display_reviewers(response)
-        reviewers = redis.lrange(REDIS_LIST, 0, -1)
+      def display_reviewers(response, room: get_room(response))
+        reviewers = ns_redis(room).lrange(REDIS_LIST, 0, -1)
         response.reply_privately(reviewers.join(', '))
       end
 
-      def generate_assignment(response)
-        reviewer = next_reviewer
+      def generate_assignment(response, room: get_room(response))
+        reviewer = next_reviewer(room)
         response.reply(reviewer.to_s)
       end
 
-      def comment_on_github(response)
+      def comment_on_github(response, room: get_room(response))
         repo = response.match_data[:repo]
         id = response.match_data[:id]
-        reviewer = next_reviewer
+        reviewer = next_reviewer(room)
         comment = github_comment(reviewer)
 
         begin
@@ -96,16 +96,16 @@ module Lita
         end
       end
 
-      def mention_reviewer(response)
+      def mention_reviewer(response, room: get_room(response))
         url = response.matches.flatten.first
-        reviewer = next_reviewer
+        reviewer = next_reviewer(room)
         response.reply(chat_mention(reviewer, url))
       end
 
       private
 
-      def next_reviewer
-        redis.rpoplpush(REDIS_LIST, REDIS_LIST)
+      def next_reviewer(room)
+        ns_redis(room).rpoplpush(REDIS_LIST, REDIS_LIST)
       end
 
       def github_comment(reviewer)
@@ -122,6 +122,14 @@ module Lita
 
       def chat_mention(reviewer, url)
         "#{reviewer}: :eyes: #{url}"
+      end
+
+      def get_room(response)
+        response.message.source.room
+      end
+
+      def ns_redis(namespace)
+        Redis::Namespace.new(namespace, redis: redis)
       end
     end
 
