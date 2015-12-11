@@ -52,6 +52,10 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
   end
 
   describe "#comment_on_github" do
+    let(:pr) do
+      OpenStruct.new({ user: OpenStruct.new({ login: "pr-owner" }) })
+    end
+
     it "posts comment on github" do
       repo = "gh_user/repo"
       id = "123"
@@ -65,7 +69,25 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       expect(replies.last).to eq("iamvery should be on it...")
     end
 
+    it "skips assigning to the GitHub PR owner" do
+      repo = "gh_user/repo"
+      id = "123"
+
+      expect_any_instance_of(Octokit::Client).to receive(:pull_request)
+        .with(repo, id).and_return(pr)
+      expect_any_instance_of(Octokit::Client).to receive(:add_comment)
+        .with(repo, id, ":eyes: @iamvery")
+
+      send_command("add pr-owner to reviews")
+      send_command("add iamvery to reviews")
+      send_command("review https://github.com/#{repo}/pull/#{id}")
+
+      expect(replies.last).to eq("iamvery should be on it...")
+    end
+
     it "handles errors gracefully" do
+      allow_any_instance_of(Octokit::Client).to receive(:pull_request)
+        .and_return(pr)
       expect_any_instance_of(Octokit::Client).to receive(:add_comment)
         .and_raise(Octokit::Error)
 
