@@ -78,14 +78,16 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
     it "skips assigning to the GitHub PR owner" do
       expect_any_instance_of(Octokit::Client).to receive(:pull_request)
         .with(repo, id).and_return(pr)
+
+      expected_reviewer = 'NOT THE PR OWNER'
       expect_any_instance_of(Octokit::Client).to receive(:add_comment)
-        .with(repo, id, ":eyes: @iamvery")
+        .with(repo, id, ":eyes: @#{expected_reviewer}")
 
       send_command("add #{pr.user.login} to reviews")
-      send_command("add iamvery to reviews")
+      send_command("add #{expected_reviewer} to reviews")
       send_command("review https://github.com/#{repo}/pull/#{id}")
 
-      expect(reply).to eq("iamvery should be on it...")
+      expect(reply).to eq("#{expected_reviewer} should be on it...")
     end
 
     it "handles errors gracefully" do
