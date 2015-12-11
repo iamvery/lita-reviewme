@@ -1,4 +1,5 @@
 require "spec_helper"
+require "ostruct"
 
 describe Lita::Handlers::Reviewme, lita_handler: true do
   it { is_expected.to route_command("add iamvery to reviews").to :add_reviewer }
@@ -58,6 +59,12 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       OpenStruct.new({ user: OpenStruct.new({ login: "pr-owner" }) })
     end
 
+    before do
+      # Prevent hitting the network for PR info.
+      allow_any_instance_of(Octokit::Client).to receive(:pull_request)
+        .and_return(pr)
+    end
+
     it "posts comment on github" do
       expect_any_instance_of(Octokit::Client).to receive(:add_comment)
         .with(repo, id, ":eyes: @iamvery")
@@ -82,8 +89,6 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
     end
 
     it "handles errors gracefully" do
-      allow_any_instance_of(Octokit::Client).to receive(:pull_request)
-        .and_return(pr)
       expect_any_instance_of(Octokit::Client).to receive(:add_comment)
         .and_raise(Octokit::Error)
 
