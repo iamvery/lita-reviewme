@@ -72,7 +72,7 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       send_command("add iamvery to reviews")
       send_command("review https://github.com/#{repo}/pull/#{id}")
 
-      expect(replies.last).to eq("iamvery should be on it...")
+      expect(reply).to eq("iamvery should be on it...")
     end
 
     it "skips assigning to the GitHub PR owner" do
@@ -85,7 +85,7 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       send_command("add iamvery to reviews")
       send_command("review https://github.com/#{repo}/pull/#{id}")
 
-      expect(replies.last).to eq("iamvery should be on it...")
+      expect(reply).to eq("iamvery should be on it...")
     end
 
     it "handles errors gracefully" do
@@ -97,7 +97,7 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       send_command("add iamvery to reviews")
       send_command("review #{url}")
 
-      expect(replies.last).to eq("I couldn't post a comment. (Are the permissions right?) iamvery: :eyes: #{url}")
+      expect(reply).to eq("I couldn't post a comment. (Are the permissions right?) iamvery: :eyes: #{url}")
     end
   end
 
