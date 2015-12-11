@@ -81,7 +81,7 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       expect_any_instance_of(Octokit::Client).to receive(:add_comment)
         .with(repo, id, ":eyes: @iamvery")
 
-      send_command("add pr-owner to reviews")
+      send_command("add #{pr.user.login} to reviews")
       send_command("add iamvery to reviews")
       send_command("review https://github.com/#{repo}/pull/#{id}")
 
