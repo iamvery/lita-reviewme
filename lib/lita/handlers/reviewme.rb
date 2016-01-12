@@ -73,7 +73,7 @@ module Lita
 
       def display_reviewers(response)
         reviewers = redis.lrange(REDIS_LIST, 0, -1)
-        response.reply(reviewers.join(', '))
+        response.reply_privately(reviewers.join(', '))
       end
 
       def generate_assignment(response)
