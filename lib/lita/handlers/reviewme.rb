@@ -61,19 +61,20 @@ module Lita
 
       def add_reviewer(response, room: get_room(response))
         reviewer = response.matches.flatten.first
-        ns_redis(room).lpush(REDIS_LIST, reviewer)
+        ns_redis(room.id).lpush(REDIS_LIST, reviewer)
         response.reply("added #{reviewer} to reviews")
       end
 
       def remove_reviewer(response, room: get_room(response))
         reviewer = response.matches.flatten.first
-        ns_redis(room).lrem(REDIS_LIST, 0, reviewer)
+        ns_redis(room.id).lrem(REDIS_LIST, 0, reviewer)
         response.reply("removed #{reviewer} from reviews")
       end
 
       def display_reviewers(response, room: get_room(response))
-        reviewers = ns_redis(room).lrange(REDIS_LIST, 0, -1)
-        response.reply_privately(reviewers.join(', '))
+        reviewers = ns_redis(room.id).lrange(REDIS_LIST, 0, -1)
+        response.reply("Responding via private message...")
+        response.reply_privately("#{room.name}: #{reviewers.join(', ')}")
       end
 
       def generate_assignment(response, room: get_room(response))
@@ -105,7 +106,7 @@ module Lita
       private
 
       def next_reviewer(room)
-        ns_redis(room).rpoplpush(REDIS_LIST, REDIS_LIST)
+        ns_redis(room.id).rpoplpush(REDIS_LIST, REDIS_LIST)
       end
 
       def github_comment(reviewer)
@@ -125,7 +126,8 @@ module Lita
       end
 
       def get_room(response)
-        response.message.source.room
+        room_id = response.message.source.room
+        Lita::Room.find_by_id(room_id) || Lita::Room.new(room_id)
       end
 
       def ns_redis(namespace)

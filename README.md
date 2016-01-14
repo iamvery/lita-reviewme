@@ -29,7 +29,9 @@ ENV["GITHUB_WOLFBRAIN_ACCESS_TOKEN"]
 
 > **Jay H.** Nerdbot: reviewers
 >
-> **Nerdbot (privately)** iamvery, zacstewart, ...
+> **Nerdbot** Responding via private message...
+>
+> **Nerdbot (privately)** channel-name: iamvery, zacstewart, ...
 
 ### Add a name to the review rotation
 
