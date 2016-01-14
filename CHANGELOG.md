@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- Respond publicly w.r.t. private reply to `reviewers`.
+- Include room name in private reply to `reviewers`.
+
 ## [0.1.0] - 2016-01-12
 
 ### Added
