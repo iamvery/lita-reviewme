@@ -84,7 +84,7 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       send_command("add zacstewart to reviews")
       send_command("reviewers")
 
-      expect(reply).to eq("zacstewart, iamvery")
+      expect(reply).to include("zacstewart, iamvery")
     end
   end
 
