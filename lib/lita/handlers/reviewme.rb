@@ -73,6 +73,7 @@ module Lita
 
       def display_reviewers(response, room: get_room(response))
         reviewers = ns_redis(room).lrange(REDIS_LIST, 0, -1)
+        response.reply("Responding via private message...")
         response.reply_privately(reviewers.join(', '))
       end
 
