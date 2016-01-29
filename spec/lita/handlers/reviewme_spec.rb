@@ -1,4 +1,5 @@
 require "spec_helper"
+require "ostruct"
 
 describe Lita::Handlers::Reviewme, lita_handler: true do
   it { is_expected.to route_command("add iamvery to reviews").to :add_reviewer }
@@ -52,17 +53,41 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
   end
 
   describe "#comment_on_github" do
-    it "posts comment on github" do
-      repo = "gh_user/repo"
-      id = "123"
+    let(:repo) { "gh_user/repo" }
+    let(:id) { "123" }
+    let(:pr) do
+      OpenStruct.new({ user: OpenStruct.new({ login: "pr-owner" }) })
+    end
 
+    before do
+      # Prevent hitting the network for PR info.
+      allow_any_instance_of(Octokit::Client).to receive(:pull_request)
+        .and_return(pr)
+    end
+
+    it "posts comment on github" do
       expect_any_instance_of(Octokit::Client).to receive(:add_comment)
         .with(repo, id, ":eyes: @iamvery")
 
       send_command("add iamvery to reviews")
       send_command("review https://github.com/#{repo}/pull/#{id}")
 
-      expect(replies.last).to eq("iamvery should be on it...")
+      expect(reply).to eq("iamvery should be on it...")
+    end
+
+    it "skips assigning to the GitHub PR owner" do
+      expect_any_instance_of(Octokit::Client).to receive(:pull_request)
+        .with(repo, id).and_return(pr)
+
+      expected_reviewer = 'NOT THE PR OWNER'
+      expect_any_instance_of(Octokit::Client).to receive(:add_comment)
+        .with(repo, id, ":eyes: @#{expected_reviewer}")
+
+      send_command("add #{pr.user.login} to reviews")
+      send_command("add #{expected_reviewer} to reviews")
+      send_command("review https://github.com/#{repo}/pull/#{id}")
+
+      expect(reply).to eq("#{expected_reviewer} should be on it...")
     end
 
     it "handles errors gracefully" do
@@ -74,7 +99,7 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       send_command("add iamvery to reviews")
       send_command("review #{url}")
 
-      expect(replies.last).to eq("I couldn't post a comment. (Are the permissions right?) iamvery: :eyes: #{url}")
+      expect(reply).to eq("I couldn't post a comment. (Are the permissions right?) iamvery: :eyes: #{url}")
     end
   end
 

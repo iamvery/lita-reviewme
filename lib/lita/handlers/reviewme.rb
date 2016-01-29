@@ -85,7 +85,15 @@ module Lita
       def comment_on_github(response, room: get_room(response))
         repo = response.match_data[:repo]
         id = response.match_data[:id]
+
         reviewer = next_reviewer(room)
+        begin
+          pull_request = github_client.pull_request(repo, id)
+          owner = pull_request.user.login
+          reviewer = next_reviewer(room) if owner == reviewer
+        rescue Octokit::Error
+          response.reply("Unable to check who issued the pull request. Sorry if you end up being assigned your own PR!")
+        end
         comment = github_comment(reviewer)
 
         begin
