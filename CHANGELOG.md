@@ -4,6 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2016-01-29
+
 ### Added
 - Prevent assignment to review your own PR (#36)
 
@@ -23,5 +25,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Start versioning gem.
 
 [Unreleased]: https://github.com/iamvery/lita-reviewme/compare/v0.1.0...HEAD
+[0.2.0]: https://github.com/iamvery/lita-reviewme/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/iamvery/lita-reviewme/compare/v0.0.1...v0.1.0
 [0.0.1]: https://github.com/iamvery/lita-reviewme/compare/a02548...v0.0.1
