@@ -4,6 +4,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Prevent assignment to review your own PR (#36)
+
 ### Changed
 - Respond publicly w.r.t. private reply to `reviewers`.
 - Include room name in private reply to `reviewers`.
