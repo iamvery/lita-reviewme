@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "lita-reviewme"
-  spec.version       = "0.2.0"
+  spec.version       = "0.3.0"
   spec.authors       = ["Jay Hayes"]
   spec.email         = ["ur@iamvery.com"]
   spec.description   = %q{A lita handler that helps with code review}
