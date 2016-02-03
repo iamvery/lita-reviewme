@@ -17,10 +17,13 @@ gem "lita-reviewme", github: "iamvery/lita-reviewme"
 
 ## Configuration
 
-Environment variable needed for Github integration:
+For the Github integration, you must set an access token in your `lita_config.rb`.
+You may use your Github account or create a special account just to leave notification comments.
+Regardless the user must have access to the repo being reviewed, and the token must be allowed to leave comments on pull requests.
 
 ```
-ENV["GITHUB_WOLFBRAIN_ACCESS_TOKEN"]
+# your bot's lita_config.rb
+config.handlers.reviewme.github_access_token = ENV["GITHUB_ACCESS_TOKEN"]
 ```
 
 ## Usage

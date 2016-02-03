@@ -4,6 +4,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- Use Lita's handler configuration rather than ENV for GH token.
+
 ## [0.2.0] - 2016-01-29
 
 ### Added

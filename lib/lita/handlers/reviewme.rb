@@ -5,6 +5,8 @@ module Lita
     class Reviewme < Handler
       REDIS_LIST = "reviewers"
 
+      config :github_access_token
+
       route(
         /add (.+) to reviews/i,
         :add_reviewer,
@@ -122,11 +124,7 @@ module Lita
       end
 
       def github_client
-        @github_client ||= Octokit::Client.new(access_token: github_access_token)
-      end
-
-      def github_access_token
-        ENV['GITHUB_WOLFBRAIN_ACCESS_TOKEN']
+        @github_client ||= Octokit::Client.new(access_token: config.github_access_token)
       end
 
       def chat_mention(reviewer, url)
