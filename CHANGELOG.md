@@ -15,7 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.2.0] - 2016-01-29
 
 ### Added
-- Prevent assignment to review your own PR (#36)
+- [#36] - Prevent assignment to review your own PR
 
 ### Changed
 - Respond publicly w.r.t. private reply to `reviewers`.
@@ -39,3 +39,4 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 [0.0.1]: https://github.com/iamvery/lita-reviewme/compare/a02548...v0.0.1
 
 [#41]: https://github.com/iamvery/lita-reviewme/pull/41
+[#36]: https://github.com/iamvery/lita-reviewme/pull/36
