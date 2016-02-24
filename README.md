@@ -63,6 +63,8 @@ to the repository.
 >
 > **Nerdbot** iamvery should be on it...
 
+If your Github user is different from your chat user, you might tweak your notification settings to include your Github username.
+
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)
