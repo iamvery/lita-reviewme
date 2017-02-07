@@ -26,6 +26,15 @@ Regardless the user must have access to the repo being reviewed, and the token m
 config.handlers.reviewme.github_access_token = ENV["GITHUB_ACCESS_TOKEN"]
 ```
 
+The default message that is posted on GitHub pull request is `:eyes: @<reviewer>`.
+The message can be customized. If you would like the reviewer to be notified, add `%{reviewer}` to your string.
+
+```
+# your bot's lita_config.rb
+
+config.handlers.reviewme.github_comment_template = "Hey %{reviewer}, check it out! :tada:"
+```
+
 ## Usage
 
 ### See who is in the review rotation.

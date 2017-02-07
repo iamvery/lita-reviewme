@@ -83,6 +83,21 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       expect(reply).to eq("Sorry, no reviewers found")
     end
 
+    it "posts custom comments on github if specified" do
+      custom_msg   = ":tada: %{reviewer} this is awesome"
+      expected_msg = ":tada: @iamvery this is awesome"
+      subject.config.github_comment_template = custom_msg
+
+      expect_any_instance_of(Octokit::Client).to receive(:add_comment)
+        .with(repo, id, expected_msg)
+
+      send_command("add iamvery to reviews")
+      send_command("review https://github.com/#{repo}/pull/#{id}")
+
+      expect(reply).to eq("iamvery should be on it...")
+      subject.config.github_comment_template = nil # teardown
+    end
+
     it "skips assigning to the GitHub PR owner" do
       expect_any_instance_of(Octokit::Client).to receive(:pull_request)
         .with(repo, id).and_return(pr)

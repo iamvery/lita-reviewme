@@ -4,8 +4,10 @@ module Lita
   module Handlers
     class Reviewme < Handler
       REDIS_LIST = "reviewers"
+      DEFAULT_GITHUB_MSG = ":eyes: %{reviewer}"
 
       config :github_access_token
+      config :github_comment_template
 
       route(
         /add (.+) to reviews/i,
@@ -121,7 +123,8 @@ module Lita
       end
 
       def github_comment(reviewer)
-        ":eyes: @#{reviewer}"
+        msg = config.github_comment_template || DEFAULT_GITHUB_MSG
+        msg % { reviewer: "@#{reviewer}" }
       end
 
       def github_client
