@@ -96,6 +96,7 @@ module Lita
         rescue Octokit::Error
           response.reply("Unable to check who issued the pull request. Sorry if you end up being assigned your own PR!")
         end
+        return response.reply('Sorry, no reviewers found') unless reviewer
         comment = github_comment(reviewer)
 
         begin
