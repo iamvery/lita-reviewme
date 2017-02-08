@@ -56,13 +56,17 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
     let(:repo) { "gh_user/repo" }
     let(:id) { "123" }
     let(:pr) do
-      OpenStruct.new({ user: OpenStruct.new({ login: "pr-owner" }) })
+      OpenStruct.new(user: OpenStruct.new(login: "pr-owner"), title: "PR title")
     end
 
     before do
       # Prevent hitting the network for PR info.
       allow_any_instance_of(Octokit::Client).to receive(:pull_request)
         .and_return(pr)
+    end
+
+    after do
+      subject.config.github_comment_template = nil
     end
 
     it "posts comment on github" do
@@ -95,7 +99,25 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       send_command("review https://github.com/#{repo}/pull/#{id}")
 
       expect(reply).to eq("iamvery should be on it...")
-      subject.config.github_comment_template = nil # teardown
+    end
+
+    it "executes a proc if specified in `config.github_comment_template`" do
+      my_lambda = lambda do |reviewer, pull_request|
+        title = pull_request[:title]
+        "hey @#{reviewer}, this is from a lambda! :tada: #{title}"
+      end
+
+      expected_msg = "hey @iamvery, this is from a lambda! :tada: #{pr.title}"
+
+      subject.config.github_comment_template = my_lambda
+
+      expect_any_instance_of(Octokit::Client).to receive(:add_comment)
+        .with(repo, id, expected_msg)
+
+      send_command("add iamvery to reviews")
+      send_command("review https://github.com/#{repo}/pull/#{id}")
+
+      expect(reply).to eq("iamvery should be on it...")
     end
 
     it "skips assigning to the GitHub PR owner" do
