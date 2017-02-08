@@ -75,6 +75,14 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       expect(reply).to eq("iamvery should be on it...")
     end
 
+    it "does NOT post comment on github when there are no reviewers" do
+      expect_any_instance_of(Octokit::Client).to_not receive(:add_comment)
+
+      send_command("review https://github.com/#{repo}/pull/#{id}")
+
+      expect(reply).to eq("Sorry, no reviewers found")
+    end
+
     it "skips assigning to the GitHub PR owner" do
       expect_any_instance_of(Octokit::Client).to receive(:pull_request)
         .with(repo, id).and_return(pr)
