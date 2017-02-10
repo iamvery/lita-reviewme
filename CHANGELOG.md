@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- [#50] - Allow custom GitHub messages via plugin config
+
+### Fixed
+- [#51] - Avoid empty GitHub message when there are no reviewers
+
 ## [0.3.1] - 2016-02-10
 
 ### Changed
