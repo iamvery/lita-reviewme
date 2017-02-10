@@ -4,8 +4,10 @@ module Lita
   module Handlers
     class Reviewme < Handler
       REDIS_LIST = "reviewers"
+      DEFAULT_GITHUB_MSG = ":eyes: %{reviewer}"
 
       config :github_access_token
+      config :github_comment_template
 
       route(
         /add (.+) to reviews/i,
@@ -97,7 +99,7 @@ module Lita
           response.reply("Unable to check who issued the pull request. Sorry if you end up being assigned your own PR!")
         end
         return response.reply('Sorry, no reviewers found') unless reviewer
-        comment = github_comment(reviewer)
+        comment = github_comment(reviewer, pull_request)
 
         begin
           github_client.add_comment(repo, id, comment)
@@ -120,8 +122,14 @@ module Lita
         ns_redis(room.id).rpoplpush(REDIS_LIST, REDIS_LIST)
       end
 
-      def github_comment(reviewer)
-        ":eyes: @#{reviewer}"
+      def github_comment(reviewer, pull_request)
+        msg = config.github_comment_template || DEFAULT_GITHUB_MSG
+
+        if msg.respond_to?(:call) # its a proc
+          msg.call(reviewer, pull_request)
+        else
+          msg % { reviewer: "@#{reviewer}" }
+        end
       end
 
       def github_client
