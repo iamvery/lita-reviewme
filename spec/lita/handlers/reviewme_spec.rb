@@ -63,10 +63,12 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       # Prevent hitting the network for PR info.
       allow_any_instance_of(Octokit::Client).to receive(:pull_request)
         .and_return(pr)
+
+      @default_github_comment_template = subject.config.github_comment_template
     end
 
     after do
-      subject.config.github_comment_template = nil
+      subject.config.github_comment_template = @default_github_comment_template
     end
 
     it "posts comment on github" do
