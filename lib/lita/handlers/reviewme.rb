@@ -7,7 +7,7 @@ module Lita
       DEFAULT_GITHUB_MSG = ":eyes: %{reviewer}"
 
       config :github_access_token
-      config :github_comment_template
+      config :github_comment_template, default: DEFAULT_GITHUB_MSG
 
       route(
         /add (.+) to reviews/i,
@@ -123,7 +123,7 @@ module Lita
       end
 
       def github_comment(reviewer, pull_request)
-        msg = config.github_comment_template || DEFAULT_GITHUB_MSG
+        msg = config.github_comment_template
 
         if msg.respond_to?(:call) # its a proc
           msg.call(reviewer, pull_request)
