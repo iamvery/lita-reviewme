@@ -52,6 +52,17 @@ config.handlers.reviewme.github_comment_template = lamda do |reviewer, pull_requ
 end
 ```
 
+Your bot can assign a reviewer by adding a comment to the requested PR (default) or by [requesting a review](https://github.com/blog/2291-introducing-review-requests) (or both).
+
+```
+# your bot's lita_config.rb
+#
+# Note:
+# The following configuration will enable review requests and disable comments
+config.handlers.reviewme.github_request_review = true  # default (false)
+config.handlers.github_comment = false                 # default (true)
+```
+
 ## Usage
 
 ### See who is in the review rotation.
