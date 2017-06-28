@@ -4,6 +4,8 @@ require 'lita-reviewme/github'
 module Lita
   module Handlers
     class Reviewme < Handler
+      InvalidConfig = Class.new(StandardError)
+
       REDIS_LIST = "reviewers"
       DEFAULT_GITHUB_MSG = ":eyes: %{reviewer}"
 
@@ -90,6 +92,7 @@ module Lita
       end
 
       def review_on_github(response, room: get_room(response))
+        validate_config
         github = Lita::Reviewme::Github.new(config, response.match_data[:repo], response.match_data[:id])
 
         if reviewer = next_reviewer(room, github.owner)
@@ -103,6 +106,8 @@ module Lita
       rescue Lita::Reviewme::Github::CannotPostComment
         url = response.match_data[:url]
         response.reply("I couldn't post a comment or request a reviewer. (Are the permissions right?) #{chat_mention(reviewer, url)}")
+      rescue InvalidConfig => error
+        response.reply(error.message)
       end
 
       def mention_reviewer(response, room: get_room(response))
@@ -112,6 +117,12 @@ module Lita
       end
 
       private
+
+      def validate_config
+        if !config.github_comment and !config.github_request_review
+          raise InvalidConfig, 'I am configured to neither leave a comment nor start a review. Check config.handlers.reviewme in lita-config.rb.'
+        end
+      end
 
       def next_reviewer(room, owner = nil)
         return unless (reviewer = ns_redis(room.id).rpoplpush(REDIS_LIST, REDIS_LIST))

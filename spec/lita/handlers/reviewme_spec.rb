@@ -180,6 +180,25 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
         expect(reply).to eq("iamvery should be on it...")
       end
     end
+
+    describe "invalid configuration" do
+      before do
+        subject.config.github_comment = false
+        subject.config.github_request_review = false
+      end
+
+      after do
+        subject.config.github_comment = true
+        subject.config.github_request_review = false
+      end
+
+      it "raises error because bot can't do anything" do
+        send_command("add iamvery to reviews")
+        send_command("review https://github.com/#{repo}/pull/#{id}")
+
+        expect(reply).to eq("I am configured to neither leave a comment nor start a review. Check config.handlers.reviewme in lita-config.rb.")
+      end
+    end
   end
 
   describe "#display_reviewers" do
