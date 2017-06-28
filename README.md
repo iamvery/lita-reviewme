@@ -60,7 +60,7 @@ Your bot can assign a reviewer by adding a comment to the requested PR (default)
 # Note:
 # The following configuration will enable review requests and disable comments
 config.handlers.reviewme.github_request_review = true  # default (false)
-config.handlers.github_comment = false                 # default (true)
+config.handlers.reviewme.github_comment = false        # default (true)
 ```
 
 ## Usage
