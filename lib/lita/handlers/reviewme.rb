@@ -120,7 +120,7 @@ module Lita
 
       def validate_config
         if !config.github_comment and !config.github_request_review
-          raise InvalidConfig, 'I am configured to neither leave a comment nor start a review. Check config.handlers.reviewme in lita-config.rb.'
+          raise InvalidConfig, 'I am configured to neither leave a comment nor start a review. Check config.handlers.reviewme in lita_config.rb.'
         end
       end
 

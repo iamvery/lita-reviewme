@@ -196,7 +196,7 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
         send_command("add iamvery to reviews")
         send_command("review https://github.com/#{repo}/pull/#{id}")
 
-        expect(reply).to eq("I am configured to neither leave a comment nor start a review. Check config.handlers.reviewme in lita-config.rb.")
+        expect(reply).to eq("I am configured to neither leave a comment nor start a review. Check config.handlers.reviewme in lita_config.rb.")
       end
     end
   end
