@@ -27,7 +27,7 @@ describe Lita::Reviewme::Github do
   subject { described_class.new(config, repo, id) }
 
   describe "ownership" do
-    it "from the pull request" do
+    it "comes from the pull request" do
       expect(subject.owner).to eq('iamvery')
     end
 
