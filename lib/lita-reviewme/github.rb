@@ -14,7 +14,7 @@ module Lita
         :github_access_token,
         :github_comment_template,
         :github_comment,
-        :github_request_review
+        :github_request_review,
       ] => :config
 
       def initialize(config, repo, pr_id)
