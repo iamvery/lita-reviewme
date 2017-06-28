@@ -1,4 +1,5 @@
 require 'octokit'
+require 'lita-reviewme/github'
 
 module Lita
   module Handlers
