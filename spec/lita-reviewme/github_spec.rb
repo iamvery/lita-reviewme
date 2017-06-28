@@ -43,14 +43,6 @@ describe Lita::Reviewme::Github do
   end
 
   describe "assignment" do
-    describe "requested not to comment or request reviewer" do
-      let(:github_comment) { false }
-
-      it "raises an exception" do
-        expect { subject.assign('iamvery') }.to raise_error(Lita::Reviewme::Github::CannotPostComment)
-      end
-    end
-
     describe "via review request" do
       let(:github_comment) { false }
       let(:github_request_review) { true }

@@ -32,8 +32,6 @@ module Lita
       def assign(reviewer)
         request_review(reviewer) if github_request_review
         add_comment(reviewer) if github_comment
-
-        raise CannotPostComment if !github_request_review && !github_comment
       rescue Octokit::Error
         raise CannotPostComment
       end
