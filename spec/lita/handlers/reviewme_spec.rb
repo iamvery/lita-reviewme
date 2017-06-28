@@ -8,9 +8,9 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
   it { is_expected.to route_command("remove reviewer iamvery").to :remove_reviewer }
   it { is_expected.to route_command("reviewers").to :display_reviewers }
   it { is_expected.to route_command("review me").to :generate_assignment }
-  it { is_expected.to route_command("review https://github.com/user/repo/pull/123").to :comment_on_github }
-  it { is_expected.to route_command("review <https://github.com/user/repo/pull/123>").to :comment_on_github }
-  it { is_expected.to route_command("review https://github.com/user/repo/issues/123").to :comment_on_github }
+  it { is_expected.to route_command("review https://github.com/user/repo/pull/123").to :review_on_github }
+  it { is_expected.to route_command("review <https://github.com/user/repo/pull/123>").to :review_on_github }
+  it { is_expected.to route_command("review https://github.com/user/repo/issues/123").to :review_on_github }
   it { is_expected.to route_command("review https://bitbucket.org/user/repo/pull-requests/123").to :mention_reviewer }
   it { is_expected.to route_command("review <https://bitbucket.org/user/repo/pull-requests/123>").to :mention_reviewer }
 
@@ -52,7 +52,7 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
     end
   end
 
-  describe "#comment_on_github" do
+  describe "#review_on_github" do
     let(:repo) { "gh_user/repo" }
     let(:id) { "123" }
     let(:pr) do
@@ -122,6 +122,16 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       expect(reply).to eq("iamvery should be on it...")
     end
 
+    it "doesn't get stuck if requester is only reviewer" do
+      expect_any_instance_of(Octokit::Client).to receive(:pull_request)
+        .with(repo, id).and_return(pr)
+
+      send_command("add #{pr.user.login} to reviews")
+      send_command("review https://github.com/#{repo}/pull/#{id}")
+
+      expect(reply).to eq('Sorry, no reviewers found')
+    end
+
     it "skips assigning to the GitHub PR owner" do
       expect_any_instance_of(Octokit::Client).to receive(:pull_request)
         .with(repo, id).and_return(pr)
@@ -146,7 +156,48 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       send_command("add iamvery to reviews")
       send_command("review #{url}")
 
-      expect(reply).to eq("I couldn't post a comment. (Are the permissions right?) iamvery: :eyes: #{url}")
+      expect(reply).to eq("I couldn't post a comment or request a reviewer. (Are the permissions right?) iamvery: :eyes: #{url}")
+    end
+
+    describe "review requests" do
+      before do
+        subject.config.github_comment = false
+        subject.config.github_request_review = true
+      end
+
+      after do
+        subject.config.github_comment = true
+        subject.config.github_request_review = false
+      end
+
+      it "requests a review if enabled" do
+        expect_any_instance_of(Octokit::Client).to receive(:request_pull_request_review)
+          .with(repo, id, ['iamvery'], { accept: "application/vnd.github.black-cat-preview" })
+
+        send_command("add iamvery to reviews")
+        send_command("review https://github.com/#{repo}/pull/#{id}")
+
+        expect(reply).to eq("iamvery should be on it...")
+      end
+    end
+
+    describe "invalid configuration" do
+      before do
+        subject.config.github_comment = false
+        subject.config.github_request_review = false
+      end
+
+      after do
+        subject.config.github_comment = true
+        subject.config.github_request_review = false
+      end
+
+      it "raises error because bot can't do anything" do
+        send_command("add iamvery to reviews")
+        send_command("review https://github.com/#{repo}/pull/#{id}")
+
+        expect(reply).to eq("I am configured to neither leave a comment nor start a review. Check config.handlers.reviewme in lita_config.rb.")
+      end
     end
   end
 

@@ -1,13 +1,18 @@
 require 'octokit'
+require 'lita-reviewme/github'
 
 module Lita
   module Handlers
     class Reviewme < Handler
+      InvalidConfig = Class.new(StandardError)
+
       REDIS_LIST = "reviewers"
       DEFAULT_GITHUB_MSG = ":eyes: %{reviewer}"
 
       config :github_access_token
       config :github_comment_template, default: DEFAULT_GITHUB_MSG
+      config :github_request_review, default: false
+      config :github_comment, default: true
 
       route(
         /add (.+) to reviews/i,
@@ -51,7 +56,7 @@ module Lita
 
       route(
         %r{review <?(?<url>(https://)?github.com/(?<repo>.+)/(pull|issues)/(?<id>\d+))>?}i,
-        :comment_on_github,
+        :review_on_github,
         command: true,
         help: { "review https://github.com/user/repo/pull/123" => "adds comment to GH issue requesting review" },
       )
@@ -86,28 +91,23 @@ module Lita
         response.reply(reviewer.to_s)
       end
 
-      def comment_on_github(response, room: get_room(response))
-        repo = response.match_data[:repo]
-        id = response.match_data[:id]
+      def review_on_github(response, room: get_room(response))
+        validate_config
+        github = Lita::Reviewme::Github.new(config, response.match_data[:repo], response.match_data[:id])
 
-        reviewer = next_reviewer(room)
-        begin
-          pull_request = github_client.pull_request(repo, id)
-          owner = pull_request.user.login
-          reviewer = next_reviewer(room) if owner == reviewer
-        rescue Octokit::Error
-          response.reply("Unable to check who issued the pull request. Sorry if you end up being assigned your own PR!")
-        end
-        return response.reply('Sorry, no reviewers found') unless reviewer
-        comment = github_comment(reviewer, pull_request)
-
-        begin
-          github_client.add_comment(repo, id, comment)
+        if reviewer = next_reviewer(room, github.owner)
+          github.assign(reviewer)
           response.reply("#{reviewer} should be on it...")
-        rescue Octokit::Error
-          url = response.match_data[:url]
-          response.reply("I couldn't post a comment. (Are the permissions right?) #{chat_mention(reviewer, url)}")
+        else
+          response.reply('Sorry, no reviewers found')
         end
+      rescue Lita::Reviewme::Github::UnknownOwner
+        response.reply("Unable to check who issued the pull request. Sorry if you end up being assigned your own PR!")
+      rescue Lita::Reviewme::Github::CannotPostComment
+        url = response.match_data[:url]
+        response.reply("I couldn't post a comment or request a reviewer. (Are the permissions right?) #{chat_mention(reviewer, url)}")
+      rescue InvalidConfig => error
+        response.reply(error.message)
       end
 
       def mention_reviewer(response, room: get_room(response))
@@ -118,22 +118,23 @@ module Lita
 
       private
 
-      def next_reviewer(room)
-        ns_redis(room.id).rpoplpush(REDIS_LIST, REDIS_LIST)
-      end
-
-      def github_comment(reviewer, pull_request)
-        msg = config.github_comment_template
-
-        if msg.respond_to?(:call) # its a proc
-          msg.call(reviewer, pull_request)
-        else
-          msg % { reviewer: "@#{reviewer}" }
+      def validate_config
+        if !config.github_comment and !config.github_request_review
+          raise InvalidConfig, 'I am configured to neither leave a comment nor start a review. Check config.handlers.reviewme in lita_config.rb.'
         end
       end
 
-      def github_client
-        @github_client ||= Octokit::Client.new(access_token: config.github_access_token)
+      def next_reviewer(room, owner = nil)
+        reviewer = ns_redis(room.id).rpoplpush(REDIS_LIST, REDIS_LIST)
+        return unless reviewer
+
+        if reviewer == owner
+          return if ns_redis(room.id).llen(REDIS_LIST) == 1
+
+          reviewer = next_reviewer(room, owner)
+        end
+
+        reviewer
       end
 
       def chat_mention(reviewer, url)
