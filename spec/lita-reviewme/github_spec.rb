@@ -49,7 +49,7 @@ describe Lita::Reviewme::Github do
 
       it "uses the request review api" do
         expect_any_instance_of(Octokit::Client).to receive(:request_pull_request_review)
-          .with(repo, id, ['iamvery'], {:accept=>"application/vnd.github.black-cat-preview"})
+          .with(repo, id, ['iamvery'], { accept: "application/vnd.github.black-cat-preview" })
 
         subject.assign('iamvery')
       end

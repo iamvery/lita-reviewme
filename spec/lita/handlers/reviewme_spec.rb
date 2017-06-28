@@ -172,7 +172,7 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
 
       it "requests a review if enabled" do
         expect_any_instance_of(Octokit::Client).to receive(:request_pull_request_review)
-          .with(repo, id, ['iamvery'], {:accept=>"application/vnd.github.black-cat-preview"})
+          .with(repo, id, ['iamvery'], { accept: "application/vnd.github.black-cat-preview" })
 
         send_command("add iamvery to reviews")
         send_command("review https://github.com/#{repo}/pull/#{id}")
