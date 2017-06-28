@@ -4,6 +4,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.0] - 2017-06-28
+
+### Added
+- [#55] [#56] - Integration with Github Reviews
+
+### Changed
+- [#54] - Use `:default` option for configuration defaults.
+
 ## [0.4.0] - 2017-02-10
 
 ### Added
@@ -42,7 +50,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Start versioning gem.
 
-[Unreleased]: https://github.com/iamvery/lita-reviewme/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/iamvery/lita-reviewme/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/iamvery/lita-reviewme/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/iamvery/lita-reviewme/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/iamvery/lita-reviewme/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/iamvery/lita-reviewme/compare/v0.2.0...v0.3.0
@@ -52,3 +61,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 [#41]: https://github.com/iamvery/lita-reviewme/pull/41
 [#36]: https://github.com/iamvery/lita-reviewme/pull/36
+[#54]: https://github.com/iamvery/lita-reviewme/pull/54
+[#55]: https://github.com/iamvery/lita-reviewme/pull/55
+[#56]: https://github.com/iamvery/lita-reviewme/pull/56
