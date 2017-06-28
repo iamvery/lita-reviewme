@@ -125,7 +125,8 @@ module Lita
       end
 
       def next_reviewer(room, owner = nil)
-        return unless (reviewer = ns_redis(room.id).rpoplpush(REDIS_LIST, REDIS_LIST))
+        reviewer = ns_redis(room.id).rpoplpush(REDIS_LIST, REDIS_LIST)
+        return unless reviewer
 
         if reviewer == owner
           return if ns_redis(room.id).llen(REDIS_LIST) == 1
