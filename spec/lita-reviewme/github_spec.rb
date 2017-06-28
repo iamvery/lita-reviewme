@@ -32,7 +32,11 @@ describe Lita::Reviewme::Github do
     end
 
     describe "unexpected error" do
-      class User; def login; raise Octokit::Error; end; end
+      class User
+        def login
+          raise Octokit::Error
+        end
+      end
 
       let(:user) { User.new }
 
