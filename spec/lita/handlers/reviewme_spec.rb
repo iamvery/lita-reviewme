@@ -166,8 +166,8 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       end
 
       after do
-        subject.config.github_request_review = false
         subject.config.github_comment = true
+        subject.config.github_request_review = false
       end
 
       it "requests a review if enabled" do
